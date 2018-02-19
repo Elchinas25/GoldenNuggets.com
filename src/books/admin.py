@@ -1,37 +1,27 @@
 from django.contrib import admin
 
-from .models import Book, Chapter, Nugget, Category
+from modeltranslation.admin import TranslationAdmin
 
-# class NuggetInline(admin.TabularInline):
-# 	model = Nugget
-# 	# fields = ['title']
-# 	# fields = ['user', 'book', 'chapter', 'golden_nugget', 'description', 'rating', 'active', 'slug']
-# 	# fieldsets = (
-# 	# 		(Associations: {
-
-# 	# 			}),
-# 	# 	)
-
-class NuggetInline(admin.TabularInline):
-    model = Nugget
+from .models import Chapter, Book, Category, Nugget, Review
 
 
-class ChapterAdmin(admin.StackedInline):
-	model = Chapter
-	inlines = [
-        NuggetInline,
-    ]
+class CategoryAdmin(TranslationAdmin):
+    pass
 
-class BookAdmin(admin.ModelAdmin):
-	list_filter = ('category',)
-	inlines = [
-        ChapterAdmin,
-        NuggetInline,
-    ]
-	
+class BookAdmin(TranslationAdmin):
+    pass
 
-admin.site.register(Category)
+class ChapterAdmin(TranslationAdmin):
+    pass
+
+class NuggetAdmin(TranslationAdmin):
+    pass
+
+class ReviewAdmin(TranslationAdmin):
+    pass
+
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Book, BookAdmin)
-# admin.site.register(Chapter, ChapterAdmin)
-
-
+admin.site.register(Chapter, ChapterAdmin)
+admin.site.register(Nugget, NuggetAdmin)
+admin.site.register(Review, ReviewAdmin)

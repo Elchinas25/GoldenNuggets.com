@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<h1>{{object.title}}</h1>
+<ul>
+{% for book in object.books.all %}
+	<a href="{{book.get_absolute_url}}">{{book.title}}</a>
+{% endfor %}
+</ul>
+
+
+{% endblock content %}
