@@ -1,18 +1,27 @@
-{% extends "base.html" %}
+{% extends "books/base.html" %}
 {% load i18n %}
 
 {% block content %}
 
-	<h1>{% trans "Welcome to the books section!" %}</h1>
+	<h1>{% trans "Reviews for" %} {{object.title}}</h1>
 	
-	
-	{% for category in object_list %}
-	<a href="{{category.get_absolute_url}}">{{category.title}}</a>
-	<ul>
-		{% for book in category.books.all %}
-			<a href="{{book.get_absolute_url}}">{{book.title}}</a>
-		{% endfor %}
-	</ul>
+	{% for review in reviews %}
+		<b>{{review.title}}, <span>{{review.rating}} stars</span></b>
+		<p>		{{review.text}}</p>
+		{% empty %}
+		<p>{% trans "There are no reviews for this book yet. Hurry up and be the first one!" %}</p>
 	{% endfor %}
+
+
+	{% if message %}
+		<b>{{message}}</b>
+	
+	{% else %}
+		<h2>{% trans "Share with the community your experience with this book!" %}</h2>
+		{% include "form.html" with form=form %}
+	{% endif %}
+		
+	
 	
 {% endblock content %}
+

@@ -1,9 +1,11 @@
-{% extends "base.html" %}
+{% extends "books/base.html" %}
 {% load i18n %}
 
 {% block content %}
 
-<h1>{{object.title}}</h1>
+<h1>{{object.title}} has {{object.n_books}} book{{object.n_books|pluralize}}!</h1>
+<p>{{object.active_books}} books</p>
+<p>{{object.unactive_books}} books</p>
 <ul>
 {% for book in object.books.all %}
 	<a href="{{book.get_absolute_url}}">{{book.title}}</a>

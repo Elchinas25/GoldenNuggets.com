@@ -27,13 +27,21 @@ class Category(models.Model):
 	def get_absolute_url(self):
 		return reverse('books:category_detail', kwargs = {'slug': self.slug})
 
+# class EnglishReviews(models.Manager):
+# 	def get_queryset(self):
+# 		return self.object.review_set.all().filter(language='en')
+
+# class SpanishReviews(models.Manager):
+# 	def get_queryset(self):
+# 		return self.object.review_set.all().filter(language='es')
+
 class Book(models.Model):
 	category 	= models.ManyToManyField(Category, related_name='books')
 	title 		= models.CharField(max_length=120, blank=False, null=False)
 	active		= models.BooleanField(default=False)
-	description = models.TextField(max_length=500, blank=True, null=True)
+	description = models.TextField(max_length=500)
 	slug 		= models.SlugField(blank=True, null=True, editable=False)
-	#image 		= models.ImageField(blank=True, null=True)
+	image 		= models.ImageField(upload_to='books', blank=True, null=True)
 	url 		= models.URLField(max_length=200, blank=True, null=True)
 	author 		= models.CharField(max_length=120, blank=True, null=True)
 	timestamp 	= models.DateField(auto_now_add=True, editable=False)
@@ -42,6 +50,10 @@ class Book(models.Model):
 
 	ratings		= []
 	average 	= models.FloatField(default=5)
+
+	# objects 		= models.Manager()
+	# english_reviews = EnglishReviews()
+	# spanish_reviews = SpanishReviews()
 
 	class Meta:
 		ordering = ['-average']
@@ -88,6 +100,16 @@ class Nugget(models.Model):
 	def rate(self, vote):
 		self.ratings.append(float(vote))
 		self.average = sum(self.ratings)/float(len(self.ratings))
+		self.save()
+
+
+# class EnglishReviews(models.Manager):
+# 	def get_queryset(self):
+# 		return super().get_queryset().filter(language='en')
+
+# class SpanishReviews(models.Manager):
+# 	def get_queryset(self):
+# 		return super().get_queryset().filter(language='es')
 
 class Review(models.Model):
 	user 		= models.ForeignKey(User, on_delete=models.PROTECT, blank=False, null=False)
@@ -98,10 +120,28 @@ class Review(models.Model):
 	rating 		= models.IntegerField(blank=False, null=False)
 	timestamp 	= models.DateField(auto_now_add=True, null=True)
 
-	def __str__(self):
-		return self.book.title
+	puntuation  = models.IntegerField()
 
-	
+	SPANISH		= 'es'
+	ENGLISH 	= 'en'
+	ALL 		= 'all'
+
+	LANGUAGES = (
+		(SPANISH, 'Spanish'), 
+		(ENGLISH, 'English'),
+		(ALL, 'All')
+		)
+
+	language 	= models.CharField(max_length=120, choices=LANGUAGES, default=ENGLISH)
+
+
+	def __str__(self):
+		return 'review for "{:s}" by {:s}'.format(self.book.title, self.user.username)
+
+
+
+
+
 
 def pre_save_category_receiver(sender, instance, *args, **kwargs):
 	instance.slug = unique_slug_generator(instance)
